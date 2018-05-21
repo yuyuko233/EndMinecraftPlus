@@ -50,4 +50,16 @@ public class ProxyPool {
 		}
 		Utils.log("Proxy", "从本地读取代理完成!数量:"+proxys.size());
 	}
+	
+	public static void runUpdateProxysTask(final int time) {
+		new Thread(()-> {
+			while(true) {
+				Utils.sleep(time*1000);
+				synchronized (proxys) {
+					proxys.clear();
+				}
+				getProxysFromAPIs();
+			}
+		}).start();
+	}
 }

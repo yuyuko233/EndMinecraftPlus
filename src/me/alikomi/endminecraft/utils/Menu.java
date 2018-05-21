@@ -1,5 +1,6 @@
 package me.alikomi.endminecraft.utils;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 import luohuayu.EndMinecraftPlus.proxy.ProxyPool;
@@ -40,7 +41,7 @@ public class Menu extends Util {
 		log("请输入是否开启操死乐乐模式 y/n，默认关闭(n)");
 		boolean lele = getCo(scanner.nextLine(),"n").equals("y");
 		getProxy();
-		IAttack attack = new DistributedBotAttack(time,maxAttack,sleepTime,lele,tab,null);
+		IAttack attack = new DistributedBotAttack(time,maxAttack,sleepTime,lele,tab,new HashMap<String,String>());
 		attack.start(ip, port);
 	}
 
@@ -49,6 +50,7 @@ public class Menu extends Util {
 		switch (getCo(scanner.nextLine(),1)) {
 		case 1:
 			ProxyPool.getProxysFromAPIs();
+			ProxyPool.runUpdateProxysTask(1200);
 			break;
 		case 2:
 			ProxyPool.getProxysFromFile();
@@ -56,9 +58,11 @@ public class Menu extends Util {
 		case 3:
 			ProxyPool.getProxysFromFile();
 			ProxyPool.getProxysFromAPIs();
+			ProxyPool.runUpdateProxysTask(1200);
 			break;
 		default:
 			ProxyPool.getProxysFromAPIs();
+			ProxyPool.runUpdateProxysTask(1200);
 		}
 	}
 }
