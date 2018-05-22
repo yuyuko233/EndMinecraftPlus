@@ -5,14 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.spacehq.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateTileEntityPacket;
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.session.PacketReceivedEvent;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
 import luohuayu.MCForgeProtocol.packet.ServerForgePluginMessagePacket;
-import luohuayu.MCForgeProtocol.packet.ServerForgeUpdateTileEntityPacket;
 
 public class MCForge {
 	private MCForgeHandShake handshake;
@@ -30,13 +28,6 @@ public class MCForge {
 		if(packet instanceof ServerForgePluginMessagePacket) {
 			ServerForgePluginMessagePacket forgePacket=(ServerForgePluginMessagePacket)packet;
 			this.session.callEvent(new PacketReceivedEvent(this.session,new ServerPluginMessagePacket(forgePacket.getChannel(),forgePacket.getData())));
-			return;
-		}else if(packet instanceof ServerForgeUpdateTileEntityPacket) {
-			ServerForgeUpdateTileEntityPacket forgePacket=(ServerForgeUpdateTileEntityPacket)packet;
-			if(forgePacket.getType()!=ServerForgeUpdateTileEntityPacket.Type.OTHER) {
-				int type=forgePacket.getType().ordinal();
-				this.session.callEvent(new PacketReceivedEvent(this.session,new ServerUpdateTileEntityPacket(0,forgePacket.getX(),forgePacket.getY(),forgePacket.getZ(),ServerUpdateTileEntityPacket.Type.values()[type],forgePacket.getNBT())));
-			}
 			return;
 		}
 		
