@@ -14,12 +14,12 @@ public class ProxyPool {
 	public static List<String> proxys=new ArrayList<String>();
 
 	public static void getProxysFromAPIs() {
-		Utils.log("Proxy", "ÕıÔÚÊ¹ÓÃAPI»ñÈ¡´úÀí..");
+		Utils.log("Proxy", "æ­£åœ¨ä½¿ç”¨APIè·å–ä»£ç†..");
 		
 		getProxysFromAPI("http://www.66ip.cn/mo.php?tqsl=10000");
 		getProxysFromAPI("http://www.89ip.cn/apijk/?tqsl=10000");
 		
-		Utils.log("Proxy", "´úÀí¸üĞÂÍê³É!ÊıÁ¿:"+proxys.size());
+		Utils.log("Proxy", "ä»£ç†æ›´æ–°å®Œæˆ!æ•°é‡:"+proxys.size());
 	}
 	
 	public static void getProxysFromAPI(String url) {
@@ -48,7 +48,7 @@ public class ProxyPool {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Utils.log("Proxy", "´Ó±¾µØ¶ÁÈ¡´úÀíÍê³É!ÊıÁ¿:"+proxys.size());
+		Utils.log("Proxy", "ä»æœ¬åœ°è¯»å–ä»£ç†å®Œæˆ!æ•°é‡:"+proxys.size());
 	}
 	
 	public static void runUpdateProxysTask(final int time) {

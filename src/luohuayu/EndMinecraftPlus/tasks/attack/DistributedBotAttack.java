@@ -64,7 +64,7 @@ public class DistributedBotAttack extends IAttack {
 						stop();
 						return;
 					}
-					Utils.log("BotThread", "Á¬½ÓÊı:"+clients.size());
+					Utils.log("BotThread", "è¿æ¥æ•°:"+clients.size());
 				}catch(Exception e){
 					Utils.log("BotThread",e.getMessage());
 				}
@@ -161,7 +161,7 @@ public class DistributedBotAttack extends IAttack {
  					}
 				}else if (e.getPacket() instanceof ServerJoinGamePacket) {
 					e.getSession().setFlag("join",true);
-					Utils.log("Client","[Á¬½Ó³É¹¦]["+username+"]");
+					Utils.log("Client","[è¿æ¥æˆåŠŸ]["+username+"]");
 				}
 			}
 			public void packetSent(PacketSentEvent e){}
@@ -174,7 +174,7 @@ public class DistributedBotAttack extends IAttack {
 				}else{
 					msg=e.getReason();
 				}
-				Utils.log("Client","[¶Ï¿ª]["+username+"] " +msg);
+				Utils.log("Client","[æ–­å¼€]["+username+"] " +msg);
 			}
 		});
 		return client;

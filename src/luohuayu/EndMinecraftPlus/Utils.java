@@ -49,7 +49,7 @@ public class Utils {
 				result += line;
 			}
 		} catch (Exception e) {
-			log("HTTP","HTTP«Î«Û ß∞‹: "+e.getMessage());
+			log("HTTP","HTTPËØ∑Ê±ÇÂ§±Ë¥•: "+e.getMessage());
 		}
 		finally {
 			try {
@@ -57,7 +57,7 @@ public class Utils {
 					in.close();
 				}
 			} catch (Exception e) {
-				log("HTTP","IO“Ï≥£: "+e.getMessage());
+				log("HTTP","IOÂºÇÂ∏∏: "+e.getMessage());
 			}
 		}
 		return result;

@@ -20,25 +20,25 @@ public class Menu extends Util {
 	}
 
 	public void _1() {
-		log("MOTD¹¥»÷Ñ¡Ôñ");
-		log("ÇëÊäÈë¹¥»÷Ê±¼ä(µ¥Î»£º¸ò)(60)");
+		log("MOTDæ”»å‡»é€‰æ‹©");
+		log("è¯·è¾“å…¥æ”»å‡»æ—¶é—´(å•ä½ï¼šè›¤)(60)");
 		int time = getCo(scanner.nextLine(),60);
-		log("ÇëÊäÈëÏß³ÌÊı(10)");
+		log("è¯·è¾“å…¥çº¿ç¨‹æ•°(10)");
 		int thread = getCo(scanner.nextLine(),16);
 		IAttack attack = new MotdAttack(time,thread,0,false,false,null);
 		attack.start(ip, port);
 	}
 
 	public void _2() {
-		log("·Ö²¼Ê½¼ÙÈËÑ¹²âÑ¡Ôñ", "ÇëÊäÈë¹¥»÷Ê±³¤£¡(3600s)");
+		log("åˆ†å¸ƒå¼å‡äººå‹æµ‹é€‰æ‹©", "è¯·è¾“å…¥æ”»å‡»æ—¶é•¿ï¼(3600s)");
 		int time = getCo(scanner.nextLine(),3600);
-		log("ÇëÊäÈë×î´ó¹¥»÷Êı(10000)");
+		log("è¯·è¾“å…¥æœ€å¤§æ”»å‡»æ•°(10000)");
 		int maxAttack = getCo(scanner.nextLine(),10000);
-		log("ÇëÊäÈëÃ¿´Î¼ÓÈë·şÎñÆ÷¼ä¸ô(ms)");
+		log("è¯·è¾“å…¥æ¯æ¬¡åŠ å…¥æœåŠ¡å™¨é—´éš”(ms)");
 		int sleepTime = getCo(scanner.nextLine(),0);
-		log("ÇëÊäÈëÊÇ·ñ¿ªÆôTAB¹¥»÷ y/n£¬Ä¬ÈÏ¹Ø±Õ(n)");
+		log("è¯·è¾“å…¥æ˜¯å¦å¼€å¯TABæ”»å‡» y/nï¼Œé»˜è®¤å…³é—­(n)");
 		boolean tab = getCo(scanner.nextLine(),"n").equals("y");
-		log("ÇëÊäÈëÊÇ·ñ¿ªÆô²ÙËÀÀÖÀÖÄ£Ê½ y/n£¬Ä¬ÈÏ¹Ø±Õ(n)");
+		log("è¯·è¾“å…¥æ˜¯å¦å¼€å¯æ“æ­»ä¹ä¹æ¨¡å¼ y/nï¼Œé»˜è®¤å…³é—­(n)");
 		boolean lele = getCo(scanner.nextLine(),"n").equals("y");
 		getProxy();
 		IAttack attack = new DistributedBotAttack(time,maxAttack,sleepTime,lele,tab,new HashMap<String,String>());
@@ -46,7 +46,7 @@ public class Menu extends Util {
 	}
 
 	public void getProxy() {
-		log("ÇëÊäÈë´úÀíipÁĞ±í»ñÈ¡·½Ê½£¨1£©£º 1.Í¨¹ıAPI»ñÈ¡ 2.Í¨¹ı±¾µØ»ñÈ¡ 3.Í¨¹ı±¾µØ+API»ñÈ¡");
+		log("è¯·è¾“å…¥ä»£ç†ipåˆ—è¡¨è·å–æ–¹å¼ï¼ˆ1ï¼‰ï¼š 1.é€šè¿‡APIè·å– 2.é€šè¿‡æœ¬åœ°è·å– 3.é€šè¿‡æœ¬åœ°+APIè·å–");
 		switch (getCo(scanner.nextLine(),1)) {
 		case 1:
 			ProxyPool.getProxysFromAPIs();

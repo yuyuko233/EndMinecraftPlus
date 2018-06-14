@@ -25,15 +25,15 @@ public class Main extends Util {
 	}
 
 	private static void getInfo() throws NamingException {
-		log("»¶Ó­Ê¹ÓÃEndMinecraftÑ¹²â³ÌĞò", "",  "=======================");
-		log("ÇëÊäÈëipµØÖ·");
+		log("æ¬¢è¿ä½¿ç”¨EndMinecraftå‹æµ‹ç¨‹åº", "",  "=======================");
+		log("è¯·è¾“å…¥ipåœ°å€");
 		ip = scanner.nextLine();
 		if (ip.contains(":")) {
 			String[] tmpip = ip.split(":");
 			ip = tmpip[0];
 			port = Integer.parseInt(tmpip[1]);
 		} else {
-			log("ÇëÊäÈë¶Ë¿Ú(25565)");
+			log("è¯·è¾“å…¥ç«¯å£(25565)");
 			port = getCo(scanner.nextLine(), 25565);
 		}
 		Hashtable<String, String> hashtable = new Hashtable<String, String>();
@@ -43,7 +43,7 @@ public class Main extends Util {
 			Attribute qwqre = (new InitialDirContext(hashtable)).getAttributes((new StringBuilder()).append("_Minecraft._tcp.").append(ip).toString(), new String[]{"SRV"}).get("srv");
 			if (qwqre != null) {
 				String[] re = qwqre.get().toString().split(" ", 4);
-				log("¼ì²âµ½SRV¼ÇÂ¼£¬×Ô¶¯Ìø×ªµ½SRV¼ÇÂ¼");
+				log("æ£€æµ‹åˆ°SRVè®°å½•ï¼Œè‡ªåŠ¨è·³è½¬åˆ°SRVè®°å½•");
 				ip = re[3];
 				log("ip: " + ip);
 				port = Integer.parseInt(re[2]);
@@ -55,7 +55,7 @@ public class Main extends Util {
 	private static void showMenu() throws IOException, InterruptedException {
 		Menu menu = new Menu(scanner, ip, port);
 		while (true) {
-			log("ÇëÊäÈë¹¥»÷·½Ê½£º", "1 : MOTD¹¥»÷", "2 : ·Ö²¼Ê½¼ÙÈË¹¥»÷(¼¯ÈºÑ¹²â)");
+			log("è¯·è¾“å…¥æ”»å‡»æ–¹å¼ï¼š", "1 : MOTDæ”»å‡»", "2 : åˆ†å¸ƒå¼å‡äººæ”»å‡»(é›†ç¾¤å‹æµ‹)");
 			log("========================");
 			switch (getCo(scanner.nextLine(), 2)) {
 			case 1:
@@ -65,7 +65,7 @@ public class Main extends Util {
 				menu._2();
 				return;
 			default:
-				log("ÄúµÄÑ¡ÔñÓĞÎó£¬ÇëÖØĞÂÑ¡Ôñ");
+				log("æ‚¨çš„é€‰æ‹©æœ‰è¯¯ï¼Œè¯·é‡æ–°é€‰æ‹©");
 			}
 		}
 	}
