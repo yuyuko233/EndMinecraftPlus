@@ -1,14 +1,15 @@
-package me.alikomi.endminecraft.utils;
+package me.alikomi.endminecraft;
 
 import java.util.HashMap;
 import java.util.Scanner;
 
+import luohuayu.EndMinecraftPlus.Utils;
 import luohuayu.EndMinecraftPlus.proxy.ProxyPool;
 import luohuayu.EndMinecraftPlus.tasks.attack.DistributedBotAttack;
 import luohuayu.EndMinecraftPlus.tasks.attack.IAttack;
 import luohuayu.EndMinecraftPlus.tasks.attack.MotdAttack;
 
-public class Menu extends Util {
+public class Menu extends Utils {
 	private String ip;
 	private Scanner scanner;
 	private int port;

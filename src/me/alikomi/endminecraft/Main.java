@@ -9,10 +9,9 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.InitialDirContext;
 
-import me.alikomi.endminecraft.utils.Menu;
-import me.alikomi.endminecraft.utils.Util;
+import luohuayu.EndMinecraftPlus.Utils;
 
-public class Main extends Util {
+public class Main extends Utils {
 	private static String ip;
 	public static int port = 25565;
 

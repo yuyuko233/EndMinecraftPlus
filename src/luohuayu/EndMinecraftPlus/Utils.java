@@ -14,7 +14,13 @@ public class Utils {
 	}
 	
 	public static void log(Object msg) {
-		log(Thread.currentThread().getName(),msg);
+		System.out.println(msg);
+	}
+
+	public static void log(Object... msg) {
+		for (Object o : msg) {
+			System.out.println(o);
+		}
 	}
 	
 	public static void sleep(long millis) {
@@ -73,5 +79,20 @@ public class Utils {
 			sb.append(str.charAt(number));
 		}
 		return sb.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T getCo(String date, T def) {
+		if (date.equals("")) {
+			return def;
+		}
+		return (T) date;
+	}
+	
+	public static int getCo(String date, int def) {
+		if (date.equals("")) {
+			return def;
+		}
+		return Integer.parseInt(date);
 	}
 }
