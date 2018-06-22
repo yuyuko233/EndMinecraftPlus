@@ -36,8 +36,8 @@ public class DistributedBotAttack extends IAttack {
 	private Thread tabThread;
 	private Thread taskThread;
 	
-	private List<Client> clients=new ArrayList<Client>();
-	private ExecutorService pool=Executors.newCachedThreadPool();
+	public List<Client> clients=new ArrayList<Client>();
+	public ExecutorService pool=Executors.newCachedThreadPool();
 	
 	private ACProtocol acp=new ACProtocol();
 	
@@ -99,6 +99,10 @@ public class DistributedBotAttack extends IAttack {
 		mainThread.stop();
 		if(tabThread!=null) tabThread.stop();
 		if(taskThread!=null) taskThread.stop();
+	}
+	
+	public void setTask(Runnable task) {
+		taskThread=new Thread(task);
 	}
 	
 	private void cleanClients() {
