@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.spacehq.mc.protocol.ProtocolConstants;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
 import org.spacehq.packetlib.Session;
@@ -33,8 +34,10 @@ public class MCForgeHandShake{
 				
 				switch(packetID) {
 					case 0: //Hello
-						forge.modifyPacket(session,63,ServerForgePluginMessagePacket.class);
-						forge.modifyPacket(session,53,ServerForgeUpdateTileEntityPacket.class);
+						if(ProtocolConstants.PROTOCOL_VERSION==5) {
+							forge.modifyPacket(session,63,ServerForgePluginMessagePacket.class);
+							forge.modifyPacket(session,53,ServerForgeUpdateTileEntityPacket.class);
+						}
 						
 						sendPluginMessage(session,"FML|HS",new byte[]{0x01, 0x02});
 						
