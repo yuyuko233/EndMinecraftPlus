@@ -55,4 +55,19 @@ public class MCForge {
 			e.printStackTrace();
 		}
 	}
+	
+	public boolean isVersion1710() {
+		try {
+			Class<?> cls = Class.forName("org.spacehq.mc.protocol.ProtocolConstants");
+			if (cls!=null) {
+				Field field=cls.getDeclaredField("PROTOCOL_VERSION");
+				int protocol=field.getInt(cls.newInstance());
+				return (protocol==5);
+			}else{
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }
