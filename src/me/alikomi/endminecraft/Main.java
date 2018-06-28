@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.InitialDirContext;
 
+import luohuayu.EndMinecraftPlus.ASMInject;
 import luohuayu.EndMinecraftPlus.Utils;
 
 public class Main extends Utils {
@@ -19,6 +20,7 @@ public class Main extends Utils {
 
 
 	public static void main(String[] args) throws InterruptedException, IOException, IllegalAccessException, InstantiationException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException, NamingException {
+		ASMInject.inject();
 		getInfo();
 		showMenu();
 	}

