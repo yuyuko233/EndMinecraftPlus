@@ -11,8 +11,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
@@ -40,7 +38,6 @@ public class DistributedBotAttack extends IAttack {
 	private Thread taskThread;
 	
 	public List<Client> clients=new ArrayList<Client>();
-	public ExecutorService pool=Executors.newCachedThreadPool();
 	
 	private ACProtocol acp=new ACProtocol();
 	
@@ -132,10 +129,8 @@ public class DistributedBotAttack extends IAttack {
 						clients.add(client);
 					}
 					
-					pool.submit(()->{
-						if(this.attack_motdbefore) getMotd(proxy,ip,port);
-						client.getSession().connect();
-					});
+					if(this.attack_motdbefore) getMotd(proxy,ip,port);
+					client.getSession().connect(false);
 					
 					if(this.attack_maxconnect>0&&(clients.size()>this.attack_maxconnect)) return;
 					if(this.attack_joinsleep>0) Utils.sleep(attack_joinsleep);
