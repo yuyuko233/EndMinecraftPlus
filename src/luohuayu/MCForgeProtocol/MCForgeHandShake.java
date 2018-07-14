@@ -2,37 +2,26 @@ package luohuayu.MCForgeProtocol;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-
 import org.spacehq.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateTileEntityPacket;
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.io.stream.StreamNetOutput;
 
-import luohuayu.MCForgeProtocol.packet.ServerForgePluginMessagePacket;
-import luohuayu.MCForgeProtocol.packet.ServerForgeUpdateTileEntityPacket;
-
 public class MCForgeHandShake{
 	private MCForge forge;
-	private HashMap<String,String> modList;
 
-	public MCForgeHandShake(MCForge forge,HashMap<String,String> modList) {
+	public MCForgeHandShake(MCForge forge) {
 		this.forge=forge;
-		this.modList=modList;
 	}
 
-	public void handle(Session session,ServerPluginMessagePacket packet) {
+	public void handle(ServerPluginMessagePacket packet) {
+		Session session=forge.session;
+		
 		byte[] data=packet.getData();
 		int packetID=data[0];
 
 		switch(packetID) {
 		case 0: //Hello
-			if(forge.isVersion1710()) {
-				forge.modifyPacket(ServerPluginMessagePacket.class,ServerForgePluginMessagePacket.class);
-				forge.modifyPacket(ServerUpdateTileEntityPacket.class,ServerForgeUpdateTileEntityPacket.class);
-			}
-
 			sendPluginMessage(session,"FML|HS",new byte[]{0x01, 0x02});
 
 			//ModList
@@ -40,8 +29,8 @@ public class MCForgeHandShake{
 			StreamNetOutput out=new StreamNetOutput(buf);
 			try {
 				out.writeVarInt(2);
-				out.writeByte(modList.size());
-				modList.forEach((k, v) -> {
+				out.writeByte(forge.modList.size());
+				forge.modList.forEach((k, v) -> {
 					try {
 						out.writeString(k);
 						out.writeString(v);
