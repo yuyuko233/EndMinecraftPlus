@@ -14,4 +14,12 @@ public class MCForgeUtils {
 		}
 		return ((high & 0xFF) << 15) | low;
 	}
+	
+	public static UnknowPacket createUnknowPacket() {
+	    try {
+            return UnknowPacket.class.newInstance();
+        } catch (Exception e) {
+            return null;
+        }
+	}
 }
